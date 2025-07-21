@@ -1,6 +1,6 @@
 {
   "name": "nukta-test-gen",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "A CLI tool that auto-generates Jest test cases for Express.js APIs.",
   "main": "index.js",
   "bin": {
