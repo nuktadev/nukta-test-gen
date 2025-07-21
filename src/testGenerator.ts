@@ -28,8 +28,15 @@ export async function generateTests(
   opts: GeneratorOptions
 ) {
   for (const route of routes) {
-    const testFileName = `${route.handler || route.method}_${route.method}_${route.path.replace(/\W+/g, "_")}.${opts.testFileExt}`;
-    const outPath = path.join(opts.outputDir, testFileName);
+    let testFileName = `${route.handler || route.method}_${route.method}_${route.path.replace(/\W+/g, "_")}.${opts.testFileExt}`;
+    let outPath = path.join(opts.outputDir, testFileName);
+    if (opts.modular) {
+      // Mirror the source file's relative path under the output dir
+      const srcRoot = opts.srcRoot || "src";
+      const relPath = path.relative(srcRoot, route.file);
+      const testFileBase = relPath.replace(/\.[jt]s$/, `.${opts.testFileExt}`);
+      outPath = path.join(opts.outputDir, testFileBase);
+    }
     const content = getTestTemplate(route, opts);
     if (!opts.dryRun) {
       await writeFileSafe(outPath, content);

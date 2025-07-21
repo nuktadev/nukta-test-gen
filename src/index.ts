@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env node
 import { Command } from "commander";
 import path from "path";
 import { scanRoutes } from "./routeScanner";
@@ -22,6 +22,11 @@ program
     false
   )
   .option("--verbose", "Enable verbose logging", false)
+  .option(
+    "--modular, -m",
+    "Generate test files in a modular folder structure",
+    false
+  )
   .action(async (opts) => {
     const srcDir = path.resolve(process.cwd(), opts.src);
     const outDir = path.resolve(process.cwd(), opts.out);
@@ -32,6 +37,8 @@ program
       useMockData: opts.mock,
       dryRun: opts.dryRun,
       verbose: opts.verbose,
+      modular: opts.modular,
+      srcRoot: opts.modular ? srcDir : undefined,
     };
     logger(`Scanning routes in ${srcDir}...`, opts.verbose);
     const routes = await scanRoutes(srcDir, opts.verbose);

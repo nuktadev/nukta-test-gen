@@ -11,4 +11,6 @@ export interface GeneratorOptions {
   useMockData: boolean;
   dryRun?: boolean;
   verbose?: boolean;
+  modular?: boolean;
+  srcRoot?: string;
 }
