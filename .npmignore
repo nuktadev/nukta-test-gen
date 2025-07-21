@@ -1,0 +1,12 @@
+src/
+tests/
+.gitignore
+.npmignore
+*.ts
+*.log
+*.tsbuildinfo
+nyc_output/
+coverage/
+README.md
+LICENSE
+CHANGELOG.md

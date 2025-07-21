@@ -1,0 +1,40 @@
+{
+  "name": "nukta-test-gen",
+  "version": "1.0.0",
+  "description": "A CLI tool that auto-generates Jest test cases for Express.js APIs.",
+  "main": "index.js",
+  "bin": {
+    "nukta-test-gen": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jest",
+    "express",
+    "test",
+    "cli",
+    "generator",
+    "automation"
+  ],
+  "author": "nurktadev",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@babel/parser": "^7.28.0",
+    "@babel/traverse": "^7.28.0",
+    "@types/node": "^24.0.15",
+    "commander": "^14.0.0",
+    "fs-extra": "^11.3.0",
+    "inquirer": "^12.8.1",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/babel__traverse": "^7.20.7",
+    "@types/fs-extra": "^11.0.4"
+  }
+}
