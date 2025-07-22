@@ -490,7 +490,7 @@ describe('Auth Module', () => {
 ### Development Setup
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/nuktadev/nuktatestify.git
 cd nuktatestify
 npm install
 npm run build
