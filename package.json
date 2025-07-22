@@ -1,6 +1,6 @@
 {
   "name": "nuktatestify",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate comprehensive, production-ready Jest test cases for Express.js APIs with MongoDB support",
   "main": "dist/index.js",
   "bin": {
