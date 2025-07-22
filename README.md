@@ -501,7 +501,7 @@ npm link
 
 ## License
 
-[MIT](LICENSE) - feel free to use this project in any way you want.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
