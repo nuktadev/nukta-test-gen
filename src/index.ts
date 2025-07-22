@@ -13,7 +13,7 @@ program
   .description(
     "Generate comprehensive Jest test cases for Express.js APIs with MongoDB support"
   )
-  .version("1.0.0")
+  .version("1.0.1")
   .option("-s, --src <dir>", "Source directory to scan", "src")
   .option("-o, --out <dir>", "Output directory for test files", "tests")
   .option("-e, --ext <ext>", "Test file extension (test.js|spec.js)", "test.js")
