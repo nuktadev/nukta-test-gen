@@ -1,12 +1,39 @@
+# Source files (not needed in published package)
 src/
 tests/
+
+# Development files
+.git/
 .gitignore
 .npmignore
-*.ts
+tsconfig.json
+jest.config.js
+
+# Build artifacts (will be included via package.json main)
+# dist/ is included in the package
+
+# Documentation (README.md will be included automatically)
+example-usage.md
+ENHANCEMENT_SUMMARY.md
+CHANGELOG.md
+
+# Development dependencies
+node_modules/
+
+# Environment and logs
+.env
 *.log
 *.tsbuildinfo
-nyc_output/
+.nyc_output/
 coverage/
-README.md
-LICENSE
-CHANGELOG.md
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
