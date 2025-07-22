@@ -69,10 +69,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nukta-dev/nuktatestify.git"
+    "url": "git+https://github.com/nuktadev/nuktatestify.git"
   },
   "bugs": {
-    "url": "https://github.com/nukta-dev/nuktatestify/issues"
+    "url": "https://github.com/nuktadev/nuktatestify/issues"
   },
-  "homepage": "https://github.com/nukta-dev/nuktatestify#readme"
+  "homepage": "https://github.com/nuktadev/nuktatestify#readme"
 }
