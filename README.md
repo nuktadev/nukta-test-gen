@@ -509,8 +509,8 @@ npm link
 
 - 📧 **Email**: support@nukta.dev
 - 🐛 **Issues**: [GitHub Issues](https://github.com/nukta-dev/nuktatestify/issues)
-- 📖 **Documentation**: [Full Documentation](https://nuktatestify.dev)
+- 📖 **Documentation**: [Full Documentation](comming soon...)
 
 ---
 
-**Made with ❤️ by the Nukta team**
+**Made with ❤️ by the Nukta Nur**
