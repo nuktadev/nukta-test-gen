@@ -16,7 +16,11 @@ program
   .version("1.0.1")
   .option("-s, --src <dir>", "Source directory to scan", "src")
   .option("-o, --out <dir>", "Output directory for test files", "tests")
-  .option("-e, --ext <ext>", "Test file extension (test.js|spec.js)", "test.js")
+  .option(
+    "-e, --ext <ext>",
+    "Test file extension (test.ts|test.js|spec.ts|spec.js)",
+    "test.ts"
+  )
   .option("--mock", "Include mock data in tests", false)
   .option(
     "--dry-run",
@@ -75,7 +79,24 @@ program
   .action(async (opts: any) => {
     const srcDir = path.resolve(process.cwd(), opts.src);
     const outDir = path.resolve(process.cwd(), opts.out);
-    const testFileExt = opts.ext === "spec.js" ? "spec.js" : "test.js";
+
+    // Determine the correct file extension
+    let testFileExt: "test.ts" | "test.js" | "spec.ts" | "spec.js";
+    switch (opts.ext) {
+      case "spec.ts":
+        testFileExt = "spec.ts";
+        break;
+      case "spec.js":
+        testFileExt = "spec.js";
+        break;
+      case "test.js":
+        testFileExt = "test.js";
+        break;
+      case "test.ts":
+      default:
+        testFileExt = "test.ts";
+        break;
+    }
 
     const generatorOpts: GeneratorOptions = {
       outputDir: outDir,
@@ -145,7 +166,7 @@ program
       logger("📝 Next steps:", true);
       logger("   1. Install required dependencies:", true);
       logger(
-        "      npm install --save-dev jest supertest mongodb-memory-server @types/jest",
+        "      npm install --save-dev jest supertest mongodb-memory-server @types/jest @types/supertest ts-jest",
         true
       );
       logger("   2. Add test script to package.json:", true);

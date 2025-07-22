@@ -5,10 +5,14 @@ import { writeFileSafe, logger } from "./utils";
 
 // Enhanced test templates for different scenarios
 const TEST_TEMPLATES = {
-  basic: (route: RouteInfo, opts: GeneratorOptions) => `
+  basic: (route: RouteInfo, opts: GeneratorOptions) => {
+    const isTypeScript = opts.testFileExt.endsWith(".ts");
+    const typeAnnotation = isTypeScript ? ": any" : "";
+
+    return `
   describe('${route.method.toUpperCase()} ${route.path}', () => {
     it('should return expected status and response structure', async () => {
-      const response = await request(app)
+      const response${typeAnnotation} = await request(app)
         .${route.method}('${route.path}')
         .set('Content-Type', 'application/json')
         .send(${generateMockBody(route)});
@@ -17,11 +21,16 @@ const TEST_TEMPLATES = {
       expect(response.body).toBeDefined();
       expect(typeof response.body).toBe('object');
     });
-  });`,
+  });`;
+  },
 
-  authenticated: (route: RouteInfo, opts: GeneratorOptions) => `
+  authenticated: (route: RouteInfo, opts: GeneratorOptions) => {
+    const isTypeScript = opts.testFileExt.endsWith(".ts");
+    const typeAnnotation = isTypeScript ? ": string" : "";
+
+    return `
   describe('${route.method.toUpperCase()} ${route.path} - Authentication', () => {
-    let authToken: string;
+    let authToken${typeAnnotation};
 
     beforeAll(async () => {
       // Setup authentication token
@@ -54,12 +63,17 @@ const TEST_TEMPLATES = {
       expect(response.status).toBeOneOf([200, 201]);
       expect(response.body).toBeDefined();
     });
-  });`,
+  });`;
+  },
 
-  validation: (route: RouteInfo, opts: GeneratorOptions) => `
+  validation: (route: RouteInfo, opts: GeneratorOptions) => {
+    const isTypeScript = opts.testFileExt.endsWith(".ts");
+    const typeAnnotation = isTypeScript ? ": any" : "";
+
+    return `
   describe('${route.method.toUpperCase()} ${route.path} - Validation', () => {
     it('should validate required fields', async () => {
-      const response = await request(app)
+      const response${typeAnnotation} = await request(app)
         .${route.method}('${route.path}')
         .set('Content-Type', 'application/json')
         .send({});
@@ -69,7 +83,7 @@ const TEST_TEMPLATES = {
     });
 
     it('should validate field types', async () => {
-      const invalidData = ${generateInvalidMockData(route)};
+      const invalidData${typeAnnotation} = ${generateInvalidMockData(route)};
       
       const response = await request(app)
         .${route.method}('${route.path}')
@@ -79,14 +93,19 @@ const TEST_TEMPLATES = {
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('message');
     });
-  });`,
+  });`;
+  },
 
-  errorHandling: (route: RouteInfo, opts: GeneratorOptions) => `
+  errorHandling: (route: RouteInfo, opts: GeneratorOptions) => {
+    const isTypeScript = opts.testFileExt.endsWith(".ts");
+    const typeAnnotation = isTypeScript ? ": any" : "";
+
+    return `
   describe('${route.method.toUpperCase()} ${route.path} - Error Handling', () => {
     it('should handle not found scenarios', async () => {
       const notFoundPath = '${route.path}/non-existent-id';
       
-      const response = await request(app)
+      const response${typeAnnotation} = await request(app)
         .${route.method}(notFoundPath)
         .set('Content-Type', 'application/json');
 
@@ -98,7 +117,7 @@ const TEST_TEMPLATES = {
       // Mock database error scenario
       jest.spyOn(console, 'error').mockImplementation(() => {});
       
-      const response = await request(app)
+      const response${typeAnnotation} = await request(app)
         .${route.method}('${route.path}')
         .set('Content-Type', 'application/json')
         .send(${generateMockBody(route)});
@@ -106,11 +125,16 @@ const TEST_TEMPLATES = {
       expect(response.status).toBeLessThan(600);
       expect(response.body).toBeDefined();
     });
-  });`,
+  });`;
+  },
 
-  integration: (route: RouteInfo, opts: GeneratorOptions) => `
+  integration: (route: RouteInfo, opts: GeneratorOptions) => {
+    const isTypeScript = opts.testFileExt.endsWith(".ts");
+    const typeAnnotation = isTypeScript ? ": any" : "";
+
+    return `
   describe('${route.method.toUpperCase()} ${route.path} - Integration', () => {
-    let testData: any;
+    let testData${typeAnnotation};
 
     beforeAll(async () => {
       // Setup test data
@@ -124,8 +148,8 @@ const TEST_TEMPLATES = {
 
     it('should perform complete CRUD operation', async () => {
       // Create
-      const createResponse = await request(app)
-        .post('${route.path}')
+      const createResponse${typeAnnotation} = await request(app)
+        .${route.method}('${route.path}')
         .set('Content-Type', 'application/json')
         .send(testData);
 
@@ -133,7 +157,7 @@ const TEST_TEMPLATES = {
       const createdId = createResponse.body.data.id;
 
       // Read
-      const readResponse = await request(app)
+      const readResponse${typeAnnotation} = await request(app)
         .get(\`${route.path}/\${createdId}\`)
         .set('Content-Type', 'application/json');
 
@@ -142,7 +166,7 @@ const TEST_TEMPLATES = {
 
       // Update
       const updateData = { ...testData, name: 'Updated Name' };
-      const updateResponse = await request(app)
+      const updateResponse${typeAnnotation} = await request(app)
         .put(\`${route.path}/\${createdId}\`)
         .set('Content-Type', 'application/json')
         .send(updateData);
@@ -150,33 +174,37 @@ const TEST_TEMPLATES = {
       expect(updateResponse.status).toBe(200);
 
       // Delete
-      const deleteResponse = await request(app)
+      const deleteResponse${typeAnnotation} = await request(app)
         .delete(\`${route.path}/\${createdId}\`)
         .set('Content-Type', 'application/json');
 
       expect(deleteResponse.status).toBeOneOf([200, 204]);
     });
-  });`,
+  });`;
+  },
 
-  performance: (route: RouteInfo, opts: GeneratorOptions) => `
+  performance: (route: RouteInfo, opts: GeneratorOptions) => {
+    const isTypeScript = opts.testFileExt.endsWith(".ts");
+    const typeAnnotation = isTypeScript ? ": any" : "";
+
+    return `
   describe('${route.method.toUpperCase()} ${route.path} - Performance', () => {
     it('should respond within acceptable time limit', async () => {
       const startTime = Date.now();
       
-      const response = await request(app)
+      const response${typeAnnotation} = await request(app)
         .${route.method}('${route.path}')
         .set('Content-Type', 'application/json')
         .send(${generateMockBody(route)});
 
-      const endTime = Date.now();
-      const responseTime = endTime - startTime;
-
-      expect(responseTime).toBeLessThan(1000); // 1 second limit
+      const responseTime = Date.now() - startTime;
+      
+      expect(responseTime).toBeLessThan(1000); // 1 second
       expect(response.status).toBeLessThan(500);
     });
 
     it('should handle concurrent requests', async () => {
-      const concurrentRequests = 10;
+      const concurrentRequests = 5;
       const promises = Array(concurrentRequests).fill(null).map(() =>
         request(app)
           .${route.method}('${route.path}')
@@ -184,13 +212,14 @@ const TEST_TEMPLATES = {
           .send(${generateMockBody(route)})
       );
 
-      const responses = await Promise.all(promises);
+      const responses${typeAnnotation} = await Promise.all(promises);
       
       responses.forEach(response => {
         expect(response.status).toBeLessThan(500);
       });
     });
-  });`,
+  });`;
+  },
 };
 
 function generateMockBody(route: RouteInfo): string {
@@ -274,9 +303,13 @@ function getModuleTestTemplate(
   const setupCode = generateSetupCode(opts);
   const testCases = generateTestCases(routes, opts);
 
-  return `const request = require('supertest');
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+  // Check if we're generating TypeScript files
+  const isTypeScript = opts.testFileExt.endsWith(".ts");
+
+  if (isTypeScript) {
+    return `import request from 'supertest';
+import mongoose from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 ${testImports}
 
 describe('${moduleName} Module', () => {
@@ -316,29 +349,123 @@ ${setupCode}
 
 ${testCases}
 });`;
+  } else {
+    return `const request = require('supertest');
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+${testImports}
+
+describe('${moduleName} Module', () => {
+  let mongoServer;
+  let app;
+
+  beforeAll(async () => {
+    // Setup in-memory MongoDB for testing
+    mongoServer = await MongoMemoryServer.create();
+    const mongoUri = mongoServer.getUri();
+    
+    await mongoose.connect(mongoUri);
+    
+    // Import and setup your app
+    app = require('../../${path.relative(opts.outputDir, firstRoute.file).replace(/\\/g, "/").replace(".route.ts", "")}');
+  });
+
+  afterAll(async () => {
+    await mongoose.disconnect();
+    await mongoServer.stop();
+  });
+
+  beforeEach(async () => {
+    // Clear all collections before each test
+    const collections = mongoose.connection.collections;
+    for (const key in collections) {
+      await collections[key].deleteMany({});
+    }
+  });
+
+  afterEach(async () => {
+    // Cleanup after each test
+    jest.clearAllMocks();
+  });
+
+${setupCode}
+
+${testCases}
+});`;
+  }
 }
 
 function generateTestImports(opts: GeneratorOptions): string {
-  const imports = [
-    "const jwt = require('jsonwebtoken');",
-    "const bcrypt = require('bcrypt');",
-  ];
+  const isTypeScript = opts.testFileExt.endsWith(".ts");
 
-  if (opts.databaseType === "mongodb") {
-    imports.push(
-      "const { MongoMemoryServer } = require('mongodb-memory-server');"
-    );
+  if (isTypeScript) {
+    const imports = [
+      "import jwt from 'jsonwebtoken';",
+      "import bcrypt from 'bcrypt';",
+    ];
+
+    if (opts.databaseType === "mongodb") {
+      imports.push(
+        "import { MongoMemoryServer } from 'mongodb-memory-server';"
+      );
+    }
+
+    if (opts.testFramework === "jest") {
+      imports.push("import { jest } from '@jest/globals';");
+    }
+
+    return imports.join("\n");
+  } else {
+    const imports = [
+      "const jwt = require('jsonwebtoken');",
+      "const bcrypt = require('bcrypt');",
+    ];
+
+    if (opts.databaseType === "mongodb") {
+      imports.push(
+        "const { MongoMemoryServer } = require('mongodb-memory-server');"
+      );
+    }
+
+    if (opts.testFramework === "jest") {
+      imports.push("const { jest } = require('@jest/globals');");
+    }
+
+    return imports.join("\n");
   }
-
-  if (opts.testFramework === "jest") {
-    imports.push("const { jest } = require('@jest/globals');");
-  }
-
-  return imports.join("\n");
 }
 
 function generateSetupCode(opts: GeneratorOptions): string {
-  return `
+  const isTypeScript = opts.testFileExt.endsWith(".ts");
+
+  if (isTypeScript) {
+    return `
+  // Test utilities
+  const createTestUser = async (): Promise<any> => {
+    const hashedPassword = await bcrypt.hash('password123', 10);
+    const user = new User({
+      email: 'test@example.com',
+      password: hashedPassword,
+      name: 'Test User',
+      role: 'user'
+    });
+    return await user.save();
+  };
+
+  const generateAuthToken = (user: any): string => {
+    return jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET || 'test-secret',
+      { expiresIn: '1h' }
+    );
+  };
+
+  const setupAuthHeaders = (token: string): Record<string, string> => ({
+    'Authorization': \`Bearer \${token}\`,
+    'Content-Type': 'application/json'
+  });`;
+  } else {
+    return `
   // Test utilities
   const createTestUser = async () => {
     const hashedPassword = await bcrypt.hash('password123', 10);
@@ -351,7 +478,7 @@ function generateSetupCode(opts: GeneratorOptions): string {
     return await user.save();
   };
 
-  const generateAuthToken = (user: any) => {
+  const generateAuthToken = (user) => {
     return jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET || 'test-secret',
@@ -359,10 +486,11 @@ function generateSetupCode(opts: GeneratorOptions): string {
     );
   };
 
-  const setupAuthHeaders = (token: string) => ({
+  const setupAuthHeaders = (token) => ({
     'Authorization': \`Bearer \${token}\`,
     'Content-Type': 'application/json'
   });`;
+  }
 }
 
 function generateTestCases(
@@ -436,11 +564,16 @@ export async function generateTests(
     for (const [filePath, fileRoutes] of routesByFile) {
       const srcRoot = opts.srcRoot || "src";
       const relPath = path.relative(srcRoot, filePath);
-      const moduleName = path
+
+      // Extract the directory and base name
+      const dir = path.dirname(relPath);
+      const baseName = path
         .basename(filePath, path.extname(filePath))
         .replace(".route", "");
-      const testFileBase = relPath.replace(/\.[jt]s$/, `.${opts.testFileExt}`);
-      const outPath = path.join(opts.outputDir, testFileBase);
+
+      // Create the test file path with the correct extension
+      const testFileName = `${baseName}.route.${opts.testFileExt}`;
+      const outPath = path.join(opts.outputDir, dir, testFileName);
 
       const content = getModuleTestTemplate(fileRoutes, opts);
 

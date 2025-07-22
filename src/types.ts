@@ -14,7 +14,7 @@ export interface RouteInfo {
 
 export interface GeneratorOptions {
   outputDir: string;
-  testFileExt: "test.js" | "spec.js";
+  testFileExt: "test.ts" | "test.js" | "spec.ts" | "spec.js";
   useMockData: boolean;
   dryRun?: boolean;
   verbose?: boolean;
